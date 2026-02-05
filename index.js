@@ -1,15 +1,14 @@
-
 const { Client, GatewayIntentBits } = require("discord.js");
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.DirectMessages
+    GatewayIntentBits.GuildMembers
   ],
 });
 
-const OWNER_ID = "1085466254522974248";
+// Your log channel ID
+const LOG_CHANNEL_ID = "1469107469081907253";
 
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
@@ -17,15 +16,18 @@ client.once("ready", () => {
 
 client.on("guildMemberAdd", async (member) => {
   try {
-    const owner = await client.users.fetch(OWNER_ID);
+    const channel = await client.channels.fetch(LOG_CHANNEL_ID);
 
-    await owner.send(
-      `👋 New member joined **${member.guild.name}**:\n` +
+    if (!channel) return;
+
+    channel.send(
+      `👋 New member joined!\n` +
+      `Server: **${member.guild.name}**\n` +
       `Username: **${member.user.tag}**\n` +
       `User ID: ${member.user.id}`
     );
   } catch (err) {
-    console.log("Could not send DM:", err);
+    console.log("Error sending join log:", err);
   }
 });
 
